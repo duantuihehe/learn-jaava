@@ -1,18 +1,31 @@
 package com.wcf.threah;
 
-public class InterruptTest extends Thread {
+/**
+ * 测试 blocked 状态时 调用interrupt
+ *
+ * blocked 状态时调用interrupt 只是修改了标志位 但不会真正的终止线程，
+ * 线程的状态也不会变化
+ */
+public class InterruptTest2 extends Thread {
+    public  static  Object obj = new Object();
+
+    public InterruptTest2(String name) {
+        super(name);
+    }
+
     @Override
     public void run() {
-        int i =0;
-        while(!interrupted()){
-            System.out.println(i++);
+        synchronized (obj){
+            System.out.println(currentThread().getName());
             try {
-                sleep(1000);
+                if(currentThread().getName().matches("a")){
+                    sleep(1000*20);//使的另外一个线程进入blocked状态
+                }
+
             } catch (InterruptedException e) {
-                System.out.println(currentThread().isInterrupted());
                 e.printStackTrace();
-                currentThread().interrupt();
             }
         }
+
     }
 }
